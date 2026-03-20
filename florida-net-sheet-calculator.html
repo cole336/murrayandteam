@@ -1,0 +1,1372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Florida Net Sheet Calculator | Cole Murray Realty</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@400;500;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #325345;
+    --primary-light: #3d6454;
+    --primary-dark: #263f35;
+    --teal: #4DB6AC;
+    --teal-hover: #3da89e;
+    --cream: #faf5ef;
+    --text-dark: #1a1a1a;
+    --text-mid: #4a4a4a;
+    --text-light: #7e7e7e;
+    --border: #d9d3cc;
+    --bg: #ffffff;
+    --bg-light: #faf5ef;
+    --accent: #325345;
+    --accent-hover: #3d6454;
+    --green: #325345;
+    --red: #c0392b;
+    --blue: #4DB6AC;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--cream);
+    color: var(--text-dark);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .calculator-container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px;
+  }
+
+  /* Logo area */
+  .logo-area {
+    text-align: center;
+    padding: 28px 24px 12px;
+  }
+
+  .logo-area svg {
+    height: 80px;
+    width: auto;
+  }
+
+  .logo-area img {
+    height: 80px;
+    width: auto;
+  }
+
+  /* Header */
+  .calc-header {
+    padding: 8px 0 20px;
+    margin-bottom: 0;
+  }
+
+  .calc-header h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--primary);
+    margin-bottom: 8px;
+    letter-spacing: 0.2px;
+  }
+
+  .calc-header p {
+    font-size: 15px;
+    color: var(--text-light);
+    max-width: 560px;
+    line-height: 1.6;
+  }
+
+  /* Tabs */
+  .tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 32px;
+    border-bottom: 3px solid var(--border);
+    padding: 0;
+  }
+
+  .tab-btn {
+    padding: 14px 28px;
+    border: none;
+    background: none;
+    color: var(--text-light);
+    font-family: 'Oswald', sans-serif;
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    cursor: pointer;
+    position: relative;
+    transition: color 0.2s;
+  }
+
+  .tab-btn.active {
+    color: var(--primary);
+  }
+
+  .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: -3px;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--teal);
+  }
+
+  .tab-btn:hover { color: var(--primary); }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* Two column layout */
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  /* Left column - form */
+  .form-col {}
+
+  .field-group {
+    margin-bottom: 28px;
+  }
+
+  .field-group-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--primary);
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid var(--teal);
+  }
+
+  .field {
+    margin-bottom: 18px;
+  }
+
+  .field label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+  }
+
+  .field label .info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    font-size: 10px;
+    color: var(--text-light);
+    cursor: help;
+    position: relative;
+  }
+
+  .field label .info-icon .tooltip {
+    display: none;
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--primary);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 8px 12px;
+    border-radius: 6px;
+    white-space: nowrap;
+    z-index: 10;
+    max-width: 260px;
+    white-space: normal;
+  }
+
+  .field label .info-icon:hover .tooltip { display: block; }
+
+  .field-input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .field-input-wrap .dollar-prefix {
+    position: absolute;
+    left: 14px;
+    color: var(--text-light);
+    font-size: 15px;
+    pointer-events: none;
+  }
+
+  .field-input-wrap input[type="number"],
+  .field-input-wrap input[type="text"] {
+    width: 100%;
+    padding: 12px 14px 12px 28px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--text-dark);
+    background: var(--bg);
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .field-input-wrap input:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(77, 182, 172, 0.15);
+  }
+
+  .field-input-wrap input[readonly] {
+    background: var(--bg-light);
+    color: var(--text-mid);
+  }
+
+  /* Dual input row (% and $) */
+  .dual-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .dual-input {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .dual-input .input-prefix {
+    position: absolute;
+    left: 14px;
+    color: var(--text-light);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  .dual-input .input-suffix {
+    position: absolute;
+    right: 14px;
+    color: var(--text-light);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  .dual-input input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--text-dark);
+    transition: border-color 0.2s;
+  }
+
+  .dual-input input.has-prefix { padding-left: 28px; }
+  .dual-input input.has-suffix { padding-right: 28px; }
+
+  .dual-input input:focus {
+    outline: none;
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(77, 182, 172, 0.15);
+  }
+
+  .dual-input input[readonly] {
+    background: var(--bg-light);
+    color: var(--text-mid);
+  }
+
+  /* Right column - summary panel */
+  .summary-col {
+    position: sticky;
+    top: 24px;
+  }
+
+  .summary-panel {
+    background: var(--primary);
+    border: none;
+    border-radius: 12px;
+    padding: 28px 24px;
+    color: #fff;
+  }
+
+  .summary-label {
+    font-size: 14px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 4px;
+  }
+
+  .summary-amount {
+    font-family: 'Oswald', sans-serif;
+    font-size: 42px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -1px;
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+
+  .summary-amount.negative { color: #ff8a80; }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 14px;
+  }
+
+  .summary-row .sr-label { color: rgba(255,255,255,0.65); }
+  .summary-row .sr-value { font-weight: 600; color: #fff; }
+
+  .summary-divider {
+    height: 1px;
+    background: rgba(255,255,255,0.15);
+    margin: 12px 0;
+  }
+
+  .summary-monthly {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+  }
+
+  .summary-monthly-label {
+    font-family: 'Oswald', sans-serif;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 500;
+    margin-bottom: 8px;
+  }
+
+  .summary-monthly-amount {
+    font-family: 'Oswald', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .summary-monthly-detail {
+    font-size: 12px;
+    color: rgba(255,255,255,0.55);
+  }
+
+  /* Action buttons */
+  .actions-bar {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .btn {
+    width: 100%;
+    padding: 14px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .btn-dark {
+    background: var(--teal);
+    color: #fff;
+  }
+
+  .btn-dark:hover { background: var(--teal-hover); }
+
+  .btn-outline {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+
+  .btn-outline:hover { background: rgba(255,255,255,0.18); }
+
+  .btn svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 32px;
+    font-size: 12px;
+    color: var(--text-light);
+    line-height: 1.7;
+    max-width: 560px;
+  }
+
+  .disclaimer em {
+    font-style: italic;
+  }
+
+  /* Responsive */
+  @media (max-width: 740px) {
+    .layout {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    .summary-col {
+      position: static;
+      order: -1;
+    }
+    .summary-amount { font-size: 34px; }
+    .calc-header h1 { font-size: 24px; }
+    .calculator-container { padding: 20px 16px; }
+  }
+
+  /* Print styles */
+  @media print {
+    .calculator-container { max-width: 100%; padding: 20px; }
+    .tabs, .actions-bar { display: none !important; }
+    .logo-area { padding: 12px 0; }
+    .tab-content { display: block !important; page-break-inside: avoid; }
+    .tab-content + .tab-content { margin-top: 40px; }
+    .layout { grid-template-columns: 1fr 300px; }
+    .summary-col { position: static; }
+    .summary-panel { border: 2px solid #325345; background: #325345 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    input { border: none !important; background: transparent !important; font-weight: 600 !important; padding-left: 24px !important; }
+    .field-group { margin-bottom: 16px; }
+    .field { margin-bottom: 10px; }
+    .print-title { display: block !important; font-size: 10px; color: #999; text-align: right; margin-bottom: 8px; }
+  }
+
+  .print-title { display: none; }
+
+  /* Select styling */
+  .field-input-wrap select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--text-dark);
+    background: var(--bg);
+    appearance: auto;
+  }
+
+  .field-input-wrap select:focus {
+    outline: none;
+    border-color: var(--teal);
+  }
+
+  /* Email modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.visible { display: flex; }
+
+  .modal {
+    background: #fff;
+    border-radius: 12px;
+    padding: 28px;
+    width: 90%;
+    max-width: 440px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+  }
+
+  .modal h3 {
+    font-size: 18px;
+    margin-bottom: 16px;
+  }
+
+  .modal input[type="email"],
+  .modal input[type="text"] {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 12px;
+  }
+
+  .modal input:focus { outline: none; border-color: var(--teal); }
+
+  .modal-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .modal-actions .btn { flex: 1; }
+  .modal .btn-dark { background: var(--primary); }
+  .modal .btn-dark:hover { background: var(--primary-light); }
+  .modal .btn-outline { background: #fff; color: var(--text-dark); border: 1px solid var(--border); }
+  .modal .btn-outline:hover { background: var(--bg-light); }
+</style>
+</head>
+<body>
+
+<div class="calculator-container">
+
+  <div class="print-title">Florida Net Sheet Estimate - Cole Murray Realty</div>
+
+  <div class="calc-header">
+    <h1>How much will I net from my real estate transaction?</h1>
+    <p>When buying or selling a home in Florida, there are additional costs like title fees, documentary stamps, commissions, and taxes. Use this calculator to estimate your net proceeds or cash to close.</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('seller')">Seller Net Sheet</button>
+    <button class="tab-btn" onclick="switchTab('buyer')">Buyer Net Sheet</button>
+  </div>
+
+  <!-- ==================== SELLER TAB ==================== -->
+  <div class="tab-content active" id="seller-tab">
+    <div class="layout">
+      <div class="form-col">
+
+        <div class="field-group">
+          <div class="field-group-title">Property Information</div>
+
+          <div class="field">
+            <label>Home Sale Price <span class="info-icon">i<span class="tooltip">The agreed-upon sale price of the property.</span></span></label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="s-sale-price" value="400000" oninput="calcSeller()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Mortgage Payoff Amount <span class="info-icon">i<span class="tooltip">Remaining balance on your mortgage. Contact your lender for an exact payoff amount.</span></span></label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="s-mortgage-payoff" value="200000" oninput="calcSeller()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Second Mortgage / HELOC</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="s-second-mortgage" value="0" oninput="calcSeller()">
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group-title">Repairs / Improvements / Staging</div>
+          <div class="field">
+            <div class="dual-row">
+              <div class="dual-input">
+                <input type="number" id="s-repairs-pct" value="0" step="0.5" class="has-suffix" oninput="syncSellerRepairsPct()">
+                <span class="input-suffix">%</span>
+              </div>
+              <div class="dual-input">
+                <span class="input-prefix">$</span>
+                <input type="number" id="s-repairs" value="0" class="has-prefix" oninput="syncSellerRepairsDollar()">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group-title">Commission</div>
+          <div class="field">
+            <label>Listing Agent Commission</label>
+            <div class="dual-row">
+              <div class="dual-input">
+                <input type="number" id="s-listing-pct" value="3" step="0.25" class="has-suffix" oninput="syncSellerListingPct()">
+                <span class="input-suffix">%</span>
+              </div>
+              <div class="dual-input">
+                <span class="input-prefix">$</span>
+                <input type="text" id="s-listing-dollar" readonly class="has-prefix" tabindex="-1">
+              </div>
+            </div>
+          </div>
+          <div class="field">
+            <label>Buyer Agent Commission</label>
+            <div class="dual-row">
+              <div class="dual-input">
+                <input type="number" id="s-buyer-pct" value="3" step="0.25" class="has-suffix" oninput="syncSellerBuyerPct()">
+                <span class="input-suffix">%</span>
+              </div>
+              <div class="dual-input">
+                <span class="input-prefix">$</span>
+                <input type="text" id="s-buyer-dollar" readonly class="has-prefix" tabindex="-1">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group-title">Florida Closing Costs</div>
+
+          <div class="field">
+            <label>Documentary Stamp Tax (Deed) <span class="info-icon">i<span class="tooltip">Florida charges $0.70 per $100 of the sale price on the deed transfer. Paid by the seller.</span></span></label>
+            <div class="dual-row">
+              <div class="dual-input">
+                <input type="text" value="0.70" readonly class="has-suffix" tabindex="-1">
+                <span class="input-suffix">/$100</span>
+              </div>
+              <div class="dual-input">
+                <span class="input-prefix">$</span>
+                <input type="text" id="s-doc-stamps" readonly class="has-prefix" tabindex="-1">
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Owner's Title Insurance <span class="info-icon">i<span class="tooltip">Calculated using Florida's promulgated title insurance rate schedule. In most FL counties the seller pays for the owner's policy.</span></span></label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="text" id="s-title-insurance" readonly tabindex="-1">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Title Search / Closing Fee</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="s-title-search" value="600" oninput="calcSeller()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Property Tax Proration <span class="info-icon">i<span class="tooltip">Estimated property taxes owed from Jan 1 through the closing date. Adjust based on your annual tax bill.</span></span></label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="s-tax-proration" value="2000" oninput="calcSeller()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>HOA Estoppel / Transfer Fee</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="s-hoa" value="250" oninput="calcSeller()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Municipal Lien Search</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="s-lien-search" value="175" oninput="calcSeller()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Recording Fees</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="s-recording" value="50" oninput="calcSeller()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Home Warranty (if offered to buyer)</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="s-warranty" value="0" oninput="calcSeller()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Other Costs</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="s-other" value="0" oninput="calcSeller()">
+            </div>
+          </div>
+        </div>
+
+        <div class="disclaimer">
+          <em>This net proceeds calculator provides an estimate of costs that are meant for educational purposes only; our calculation is not a guarantee and is based on the information that you've entered. Our total costs to sell include remaining mortgage, commission, and estimated closing costs per Florida statute.</em>
+        </div>
+
+      </div>
+
+      <!-- Right summary panel -->
+      <div class="summary-col">
+        <div class="summary-panel">
+          <div class="summary-label">Estimated net when selling your home</div>
+          <div class="summary-amount" id="s-net-display">$0</div>
+
+          <div class="summary-row">
+            <span class="sr-label">Home Sale Price</span>
+            <span class="sr-value" id="s-sum-price">$400,000</span>
+          </div>
+          <div class="summary-row">
+            <span class="sr-label">Total costs to sell</span>
+            <span class="sr-value" id="s-sum-total-costs">$0</span>
+          </div>
+          <div class="summary-row">
+            <span class="sr-label">Mortgage payoff</span>
+            <span class="sr-value" id="s-sum-mortgage">$200,000</span>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-row" style="font-size:12px;">
+            <span class="sr-label">Commission</span>
+            <span class="sr-value" id="s-detail-commission">$0</span>
+          </div>
+          <div class="summary-row" style="font-size:12px;">
+            <span class="sr-label">Doc stamps</span>
+            <span class="sr-value" id="s-detail-stamps">$0</span>
+          </div>
+          <div class="summary-row" style="font-size:12px;">
+            <span class="sr-label">Title insurance</span>
+            <span class="sr-value" id="s-detail-title">$0</span>
+          </div>
+          <div class="summary-row" style="font-size:12px;">
+            <span class="sr-label">Other closing costs</span>
+            <span class="sr-value" id="s-detail-other">$0</span>
+          </div>
+
+          <div class="actions-bar">
+            <button class="btn btn-dark" onclick="exportPDF()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              Export / Print PDF
+            </button>
+            <button class="btn btn-outline" onclick="showEmailModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Email Estimate
+            </button>
+            <button class="btn btn-outline" onclick="resetAll()">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== BUYER TAB ==================== -->
+  <div class="tab-content" id="buyer-tab">
+    <div class="layout">
+      <div class="form-col">
+
+        <div class="field-group">
+          <div class="field-group-title">Purchase & Loan Information</div>
+
+          <div class="field">
+            <label>Purchase Price</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-purchase-price" value="400000" oninput="calcBuyer()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Down Payment <span class="info-icon">i<span class="tooltip">Percentage of the purchase price you will pay upfront. Conventional loans often require 5-20%, FHA 3.5%, VA 0%.</span></span></label>
+            <div class="dual-row">
+              <div class="dual-input">
+                <input type="number" id="b-down-pct" value="20" step="0.5" class="has-suffix" oninput="calcBuyer()">
+                <span class="input-suffix">%</span>
+              </div>
+              <div class="dual-input">
+                <span class="input-prefix">$</span>
+                <input type="text" id="b-down-dollar" readonly class="has-prefix" tabindex="-1">
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Loan Amount</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="text" id="b-loan-amount" readonly tabindex="-1">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Interest Rate</label>
+            <div class="dual-input" style="max-width:200px;">
+              <input type="number" id="b-interest-rate" value="6.5" step="0.125" class="has-suffix" oninput="calcBuyer()">
+              <span class="input-suffix">%</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Loan Type</label>
+            <div class="field-input-wrap">
+              <select id="b-loan-type" onchange="calcBuyer()">
+                <option value="conventional">Conventional</option>
+                <option value="fha">FHA</option>
+                <option value="va">VA</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group-title">Florida Closing Costs</div>
+
+          <div class="field">
+            <label>Doc Stamps on Note <span class="info-icon">i<span class="tooltip">Florida charges $0.35 per $100 of the mortgage amount on the promissory note.</span></span></label>
+            <div class="dual-row">
+              <div class="dual-input">
+                <input type="text" value="0.35" readonly class="has-suffix" tabindex="-1">
+                <span class="input-suffix">/$100</span>
+              </div>
+              <div class="dual-input">
+                <span class="input-prefix">$</span>
+                <input type="text" id="b-doc-stamps" readonly class="has-prefix" tabindex="-1">
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Intangible Tax on Mortgage <span class="info-icon">i<span class="tooltip">Florida charges $0.20 per $100 ($2.00 per $1,000) of the mortgage amount.</span></span></label>
+            <div class="dual-row">
+              <div class="dual-input">
+                <input type="text" value="0.20" readonly class="has-suffix" tabindex="-1">
+                <span class="input-suffix">/$100</span>
+              </div>
+              <div class="dual-input">
+                <span class="input-prefix">$</span>
+                <input type="text" id="b-intangible-tax" readonly class="has-prefix" tabindex="-1">
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Lender's Title Insurance <span class="info-icon">i<span class="tooltip">Simultaneous issue rate, typically about 25% of the standard premium.</span></span></label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="text" id="b-lender-title" readonly tabindex="-1">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Recording Fees (Deed + Mortgage)</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-recording" value="200" oninput="calcBuyer()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Property Tax Proration</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-tax-proration" value="2000" oninput="calcBuyer()">
+            </div>
+          </div>
+        </div>
+
+        <div class="field-group">
+          <div class="field-group-title">Lender Fees & Prepaids</div>
+
+          <div class="field">
+            <label>Loan Origination Fee</label>
+            <div class="dual-row">
+              <div class="dual-input">
+                <input type="number" id="b-origination-pct" value="1" step="0.25" class="has-suffix" oninput="calcBuyer()">
+                <span class="input-suffix">%</span>
+              </div>
+              <div class="dual-input">
+                <span class="input-prefix">$</span>
+                <input type="text" id="b-origination-dollar" readonly class="has-prefix" tabindex="-1">
+              </div>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Appraisal</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-appraisal" value="500" oninput="calcBuyer()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Home Inspection</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-inspection" value="450" oninput="calcBuyer()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Survey</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-survey" value="350" oninput="calcBuyer()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Homeowner's Insurance (1 Year Prepaid)</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-insurance" value="2400" oninput="calcBuyer()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Escrow Reserves (Tax + Ins, ~3 Mo)</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-escrow" value="1500" oninput="calcBuyer()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Wind Mitigation / 4-Point Inspection</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-wind" value="150" oninput="calcBuyer()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>HOA Transfer / Move-in Fees</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-hoa" value="0" oninput="calcBuyer()">
+            </div>
+          </div>
+
+          <div class="field">
+            <label>Other Costs</label>
+            <div class="field-input-wrap">
+              <span class="dollar-prefix">$</span>
+              <input type="number" id="b-other" value="0" oninput="calcBuyer()">
+            </div>
+          </div>
+        </div>
+
+        <div class="disclaimer">
+          <em>This calculator provides an estimate of costs for educational purposes only; our calculation is not a guarantee and is based on the information that you've entered. Florida documentary stamps, intangible tax, and title insurance are calculated per Florida statute. Consult your lender and title company for exact figures.</em>
+        </div>
+
+      </div>
+
+      <!-- Right summary panel -->
+      <div class="summary-col">
+        <div class="summary-panel">
+          <div class="summary-label">Estimated cash to close</div>
+          <div class="summary-amount" id="b-net-display">$0</div>
+
+          <div class="summary-row">
+            <span class="sr-label">Purchase Price</span>
+            <span class="sr-value" id="b-sum-price">$400,000</span>
+          </div>
+          <div class="summary-row">
+            <span class="sr-label">Down Payment</span>
+            <span class="sr-value" id="b-sum-down">$80,000</span>
+          </div>
+          <div class="summary-row">
+            <span class="sr-label">Loan Amount</span>
+            <span class="sr-value" id="b-sum-loan">$320,000</span>
+          </div>
+          <div class="summary-row">
+            <span class="sr-label">Total closing costs</span>
+            <span class="sr-value" id="b-sum-total-costs">$0</span>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-row" style="font-size:12px;">
+            <span class="sr-label">FL doc stamps + taxes</span>
+            <span class="sr-value" id="b-detail-fl">$0</span>
+          </div>
+          <div class="summary-row" style="font-size:12px;">
+            <span class="sr-label">Lender fees & prepaids</span>
+            <span class="sr-value" id="b-detail-lender">$0</span>
+          </div>
+          <div class="summary-row" style="font-size:12px;">
+            <span class="sr-label">Title insurance</span>
+            <span class="sr-value" id="b-detail-title">$0</span>
+          </div>
+
+          <div class="summary-monthly">
+            <div class="summary-monthly-label">Estimated Monthly Payment</div>
+            <div class="summary-monthly-amount" id="b-monthly-total">$0</div>
+            <div class="summary-monthly-detail" id="b-monthly-detail">P&I $0 / Tax $0 / Ins $0</div>
+          </div>
+
+          <div class="actions-bar">
+            <button class="btn btn-dark" onclick="exportPDF()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14,2 14,8 20,8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+              Export / Print PDF
+            </button>
+            <button class="btn btn-outline" onclick="showEmailModal()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              Email Estimate
+            </button>
+            <button class="btn btn-outline" onclick="resetAll()">Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Email Modal -->
+<div class="modal-overlay" id="emailModal">
+  <div class="modal">
+    <h3>Email This Estimate</h3>
+    <input type="email" id="email-to" placeholder="Recipient email address">
+    <input type="text" id="email-name" placeholder="Client name (optional)">
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="closeEmailModal()">Cancel</button>
+      <button class="btn btn-dark" onclick="sendEmail()">Send Email</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ==================== UTILITIES ====================
+  function fmt(n) {
+    if (isNaN(n)) n = 0;
+    return Math.round(n).toLocaleString('en-US');
+  }
+
+  function fmtD(n) {
+    if (isNaN(n)) n = 0;
+    return '$' + fmt(Math.abs(n));
+  }
+
+  function val(id) {
+    return parseFloat(document.getElementById(id).value) || 0;
+  }
+
+  function setText(id, text) {
+    document.getElementById(id).textContent = text;
+  }
+
+  function setVal(id, v) {
+    document.getElementById(id).value = v;
+  }
+
+  // ==================== FL TITLE INSURANCE (Promulgated Rates) ====================
+  function calcFLTitle(amount) {
+    if (amount <= 0) return 0;
+    let p = 0;
+    if (amount <= 100000) {
+      p = amount * 5.75 / 1000;
+    } else {
+      p = 100000 * 5.75 / 1000;
+      p += (Math.min(amount, 1000000) - 100000) * 5.00 / 1000;
+      if (amount > 1000000) p += (Math.min(amount, 5000000) - 1000000) * 2.50 / 1000;
+      if (amount > 5000000) p += (Math.min(amount, 10000000) - 5000000) * 2.25 / 1000;
+      if (amount > 10000000) p += (amount - 10000000) * 2.00 / 1000;
+    }
+    return Math.round(p);
+  }
+
+  function calcFLLenderTitle(loan, sale) {
+    if (loan <= 0) return 0;
+    let base = Math.min(loan, sale);
+    let p = 0;
+    if (base <= 100000) {
+      p = base * 5.75 / 1000;
+    } else {
+      p = 100000 * 5.75 / 1000;
+      p += (Math.min(base, 1000000) - 100000) * 5.00 / 1000;
+      if (base > 1000000) p += (base - 1000000) * 2.50 / 1000;
+    }
+    return Math.round(p * 0.25);
+  }
+
+  // ==================== SELLER SYNC HELPERS ====================
+  function syncSellerRepairsPct() {
+    const price = val('s-sale-price');
+    const pct = val('s-repairs-pct');
+    document.getElementById('s-repairs').value = Math.round(price * pct / 100);
+    calcSeller();
+  }
+
+  function syncSellerRepairsDollar() {
+    const price = val('s-sale-price');
+    const dollars = val('s-repairs');
+    document.getElementById('s-repairs-pct').value = price > 0 ? (dollars / price * 100).toFixed(1) : 0;
+    calcSeller();
+  }
+
+  function syncSellerListingPct() {
+    const price = val('s-sale-price');
+    const pct = val('s-listing-pct');
+    setVal('s-listing-dollar', fmt(Math.round(price * pct / 100)));
+    calcSeller();
+  }
+
+  function syncSellerBuyerPct() {
+    const price = val('s-sale-price');
+    const pct = val('s-buyer-pct');
+    setVal('s-buyer-dollar', fmt(Math.round(price * pct / 100)));
+    calcSeller();
+  }
+
+  // ==================== SELLER CALC ====================
+  function calcSeller() {
+    const price = val('s-sale-price');
+    const mortgage1 = val('s-mortgage-payoff');
+    const mortgage2 = val('s-second-mortgage');
+    const listPct = val('s-listing-pct');
+    const buyPct = val('s-buyer-pct');
+    const repairs = val('s-repairs');
+    const titleSearch = val('s-title-search');
+    const taxProration = val('s-tax-proration');
+    const hoa = val('s-hoa');
+    const lienSearch = val('s-lien-search');
+    const recording = val('s-recording');
+    const warranty = val('s-warranty');
+    const other = val('s-other');
+
+    // Auto-update commission dollar fields
+    setVal('s-listing-dollar', fmt(Math.round(price * listPct / 100)));
+    setVal('s-buyer-dollar', fmt(Math.round(price * buyPct / 100)));
+
+    // FL doc stamps on deed
+    const docStamps = Math.ceil(price / 100) * 0.70;
+    setVal('s-doc-stamps', fmt(Math.round(docStamps)));
+
+    // Title insurance
+    const titleIns = calcFLTitle(price);
+    setVal('s-title-insurance', fmt(titleIns));
+
+    // Totals
+    const totalCommission = price * (listPct + buyPct) / 100;
+    const totalMortgage = mortgage1 + mortgage2;
+    const closingCosts = docStamps + titleIns + titleSearch + taxProration + hoa + lienSearch + recording;
+    const otherCosts = repairs + warranty + other;
+    const totalCosts = totalCommission + closingCosts + otherCosts;
+    const net = price - totalMortgage - totalCosts;
+
+    // Update summary
+    setText('s-sum-price', fmtD(price));
+    setText('s-sum-total-costs', fmtD(totalCosts));
+    setText('s-sum-mortgage', fmtD(totalMortgage));
+    setText('s-detail-commission', fmtD(totalCommission));
+    setText('s-detail-stamps', fmtD(docStamps));
+    setText('s-detail-title', fmtD(titleIns));
+    setText('s-detail-other', fmtD(closingCosts - docStamps - titleIns + otherCosts));
+
+    const netEl = document.getElementById('s-net-display');
+    netEl.textContent = (net < 0 ? '-' : '') + fmtD(net);
+    netEl.classList.toggle('negative', net < 0);
+  }
+
+  // ==================== BUYER CALC ====================
+  function calcBuyer() {
+    const price = val('b-purchase-price');
+    const downPct = val('b-down-pct');
+    const rate = val('b-interest-rate');
+    const origPct = val('b-origination-pct');
+    const appraisal = val('b-appraisal');
+    const inspection = val('b-inspection');
+    const survey = val('b-survey');
+    const insurance = val('b-insurance');
+    const escrow = val('b-escrow');
+    const recording = val('b-recording');
+    const taxProration = val('b-tax-proration');
+    const hoaFee = val('b-hoa');
+    const wind = val('b-wind');
+    const otherCost = val('b-other');
+
+    const downPayment = Math.round(price * downPct / 100);
+    const loanAmount = price - downPayment;
+    const origFee = Math.round(loanAmount * origPct / 100);
+
+    setVal('b-down-dollar', fmt(downPayment));
+    setVal('b-loan-amount', fmt(loanAmount));
+    setVal('b-origination-dollar', fmt(origFee));
+
+    // FL doc stamps on note
+    const docStamps = Math.ceil(loanAmount / 100) * 0.35;
+    setVal('b-doc-stamps', fmt(Math.round(docStamps)));
+
+    // FL intangible tax
+    const intangibleTax = loanAmount * 0.002;
+    setVal('b-intangible-tax', fmt(Math.round(intangibleTax)));
+
+    // Lender's title
+    const lenderTitle = calcFLLenderTitle(loanAmount, price);
+    setVal('b-lender-title', fmt(lenderTitle));
+
+    // Totals
+    const flCosts = docStamps + intangibleTax + recording + taxProration;
+    const lenderFees = origFee + appraisal + inspection + survey + insurance + escrow + wind;
+    const additional = hoaFee + otherCost;
+    const totalClosing = flCosts + lenderTitle + lenderFees + additional;
+    const cashToClose = downPayment + totalClosing;
+
+    // Summary
+    setText('b-sum-price', fmtD(price));
+    setText('b-sum-down', fmtD(downPayment));
+    setText('b-sum-loan', fmtD(loanAmount));
+    setText('b-sum-total-costs', fmtD(totalClosing));
+    setText('b-detail-fl', fmtD(flCosts));
+    setText('b-detail-lender', fmtD(lenderFees));
+    setText('b-detail-title', fmtD(lenderTitle));
+
+    const netEl = document.getElementById('b-net-display');
+    netEl.textContent = fmtD(cashToClose);
+
+    // Monthly payment (30yr fixed)
+    const mr = rate / 100 / 12;
+    let pi = 0;
+    if (mr > 0 && loanAmount > 0) {
+      pi = loanAmount * (mr * Math.pow(1 + mr, 360)) / (Math.pow(1 + mr, 360) - 1);
+    }
+    const mTax = Math.round((taxProration / 3) * 4 / 12); // annualize proration then /12
+    const mIns = Math.round(insurance / 12);
+    const mTotal = Math.round(pi) + mTax + mIns;
+
+    setText('b-monthly-total', fmtD(mTotal));
+    document.getElementById('b-monthly-detail').textContent =
+      'P&I ' + fmtD(Math.round(pi)) + ' / Tax ' + fmtD(mTax) + ' / Ins ' + fmtD(mIns);
+  }
+
+  // ==================== TAB SWITCHING ====================
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    if (tab === 'seller') {
+      document.querySelectorAll('.tab-btn')[0].classList.add('active');
+      document.getElementById('seller-tab').classList.add('active');
+    } else {
+      document.querySelectorAll('.tab-btn')[1].classList.add('active');
+      document.getElementById('buyer-tab').classList.add('active');
+    }
+  }
+
+  // ==================== EXPORT ====================
+  function exportPDF() { window.print(); }
+
+  // ==================== EMAIL ====================
+  function showEmailModal() {
+    document.getElementById('emailModal').classList.add('visible');
+  }
+
+  function closeEmailModal() {
+    document.getElementById('emailModal').classList.remove('visible');
+  }
+
+  function sendEmail() {
+    const to = document.getElementById('email-to').value || '';
+    const name = document.getElementById('email-name').value || 'Client';
+    const activeTab = document.querySelector('.tab-content.active').id;
+    let subject, body;
+
+    if (activeTab === 'seller-tab') {
+      subject = 'Your Seller Net Sheet Estimate - Florida';
+      body =
+        'Hi ' + name + ',\n\n' +
+        'Here is your estimated seller net sheet for your Florida property:\n\n' +
+        'Sale Price: ' + document.getElementById('s-sum-price').textContent + '\n' +
+        'Total Costs to Sell: ' + document.getElementById('s-sum-total-costs').textContent + '\n' +
+        'Mortgage Payoff: ' + document.getElementById('s-sum-mortgage').textContent + '\n\n' +
+        'ESTIMATED NET PROCEEDS: ' + document.getElementById('s-net-display').textContent + '\n\n' +
+        '--- Breakdown ---\n' +
+        'Commission: ' + document.getElementById('s-detail-commission').textContent + '\n' +
+        'Documentary Stamps: ' + document.getElementById('s-detail-stamps').textContent + '\n' +
+        'Title Insurance: ' + document.getElementById('s-detail-title').textContent + '\n' +
+        'Other Closing Costs: ' + document.getElementById('s-detail-other').textContent + '\n\n' +
+        'This is an estimate only. Actual figures may vary based on final closing details.\n' +
+        'Please contact me with any questions.\n\n' +
+        'Best regards,\nCole Murray Realty';
+    } else {
+      subject = 'Your Buyer Net Sheet Estimate - Florida';
+      body =
+        'Hi ' + name + ',\n\n' +
+        'Here is your estimated buyer closing costs for your Florida purchase:\n\n' +
+        'Purchase Price: ' + document.getElementById('b-sum-price').textContent + '\n' +
+        'Down Payment: ' + document.getElementById('b-sum-down').textContent + '\n' +
+        'Loan Amount: ' + document.getElementById('b-sum-loan').textContent + '\n' +
+        'Total Closing Costs: ' + document.getElementById('b-sum-total-costs').textContent + '\n\n' +
+        'ESTIMATED CASH TO CLOSE: ' + document.getElementById('b-net-display').textContent + '\n' +
+        'ESTIMATED MONTHLY PAYMENT: ' + document.getElementById('b-monthly-total').textContent + '\n\n' +
+        '--- Breakdown ---\n' +
+        'FL Doc Stamps + Taxes: ' + document.getElementById('b-detail-fl').textContent + '\n' +
+        'Lender Fees & Prepaids: ' + document.getElementById('b-detail-lender').textContent + '\n' +
+        'Title Insurance: ' + document.getElementById('b-detail-title').textContent + '\n\n' +
+        'This is an estimate only. Actual figures may vary.\n' +
+        'Please contact me with any questions.\n\n' +
+        'Best regards,\nCole Murray Realty';
+    }
+
+    window.location.href = 'mailto:' + encodeURIComponent(to) +
+      '?subject=' + encodeURIComponent(subject) +
+      '&body=' + encodeURIComponent(body);
+    closeEmailModal();
+  }
+
+  // ==================== RESET ====================
+  function resetAll() {
+    const activeTab = document.querySelector('.tab-content.active').id;
+    if (activeTab === 'seller-tab') {
+      setVal('s-sale-price', 400000);
+      setVal('s-mortgage-payoff', 200000);
+      setVal('s-second-mortgage', 0);
+      setVal('s-listing-pct', 3);
+      setVal('s-buyer-pct', 3);
+      setVal('s-repairs-pct', 0);
+      setVal('s-repairs', 0);
+      setVal('s-title-search', 600);
+      setVal('s-tax-proration', 2000);
+      setVal('s-hoa', 250);
+      setVal('s-lien-search', 175);
+      setVal('s-recording', 50);
+      setVal('s-warranty', 0);
+      setVal('s-other', 0);
+      calcSeller();
+    } else {
+      setVal('b-purchase-price', 400000);
+      setVal('b-down-pct', 20);
+      setVal('b-interest-rate', 6.5);
+      document.getElementById('b-loan-type').value = 'conventional';
+      setVal('b-origination-pct', 1);
+      setVal('b-appraisal', 500);
+      setVal('b-inspection', 450);
+      setVal('b-survey', 350);
+      setVal('b-insurance', 2400);
+      setVal('b-escrow', 1500);
+      setVal('b-recording', 200);
+      setVal('b-tax-proration', 2000);
+      setVal('b-hoa', 0);
+      setVal('b-wind', 150);
+      setVal('b-other', 0);
+      calcBuyer();
+    }
+  }
+
+  // Close modal on overlay click
+  document.getElementById('emailModal').addEventListener('click', function(e) {
+    if (e.target === this) closeEmailModal();
+  });
+
+  // ==================== INIT ====================
+  calcSeller();
+  calcBuyer();
+</script>
+
+</body>
+</html>
