@@ -5,7 +5,7 @@
 
   // ---- CONFIG ----
   const placeId = "ChIJtQuRYeGr3IgR3b0lniVBwMM";
-  const apiKey = "YOUR_GOOGLE_API_KEY"; // <-- replace this
+  const apiKey = "AIzaSyAiLLcwEE7aAOb7s1GHdoCJz1jQIuIHguE"; // <-- replace this
 
   // Loading state
   container.innerHTML = `
