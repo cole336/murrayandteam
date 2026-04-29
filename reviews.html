@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Google Reviews</title>
+</head>
+<body style="margin:0;font-family:Arial;">
+
+<div id="reviews"></div>
+
+<script>
+const placeId = "ChIJtQuRYeGr3IgR3b0lniVBwMM";
+const apiKey = "AIzaSyAiLLcwEE7aAOb7s1GHdoCJz1jQIuIHguE";
+
+fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews&key=${apiKey}`)
+.then(res => res.json())
+.then(data => {
+
+  const reviews = data.result?.reviews || [];
+
+  document.getElementById("reviews").innerHTML = `
+    <div style="padding:40px;background:#f6f6f6;">
+      ${reviews.slice(0,5).map(r => `
+        <div style="background:#fff;margin-bottom:15px;padding:15px;border-radius:10px;">
+          <div style="color:#f5b50a;">${"★".repeat(r.rating)}</div>
+          <p>${r.text}</p>
+          <strong>${r.author_name}</strong>
+        </div>
+      `).join("")}
+    </div>
+  `;
+});
+</script>
+
+</body>
+</html>
