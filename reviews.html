@@ -2,35 +2,66 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Google Reviews</title>
+  <title>Client Reviews</title>
 </head>
-<body style="margin:0;font-family:Arial;">
 
-<div id="reviews"></div>
+<body style="margin:0;font-family:Arial;background:#f6f6f6;">
 
-<script>
-const placeId = "ChIJtQuRYeGr3IgR3b0lniVBwMM";
-const apiKey = "AIzaSyAiLLcwEE7aAOb7s1GHdoCJz1jQIuIHguE";
+<section style="padding:70px 20px;text-align:center;">
 
-fetch(`https://maps.googleapis.com/maps/api/place/details/json?place_id=${placeId}&fields=reviews&key=${apiKey}`)
-.then(res => res.json())
-.then(data => {
+  <h2 style="color:#1f4f46;font-size:34px;margin-bottom:10px;">
+    What Clients Are Saying
+  </h2>
 
-  const reviews = data.result?.reviews || [];
+  <p style="color:#666;margin-bottom:40px;">
+    Real experiences from buyers and sellers across Southwest Florida
+  </p>
 
-  document.getElementById("reviews").innerHTML = `
-    <div style="padding:40px;background:#f6f6f6;">
-      ${reviews.slice(0,5).map(r => `
-        <div style="background:#fff;margin-bottom:15px;padding:15px;border-radius:10px;">
-          <div style="color:#f5b50a;">${"★".repeat(r.rating)}</div>
-          <p>${r.text}</p>
-          <strong>${r.author_name}</strong>
-        </div>
-      `).join("")}
+  <div style="
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:20px;
+  ">
+
+    <div style="background:#fff;padding:22px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.08);">
+      <div style="color:#f5b50a;">★★★★★</div>
+      <p>“Cole made the entire process seamless and stress-free. Highly recommend!”</p>
+      <strong>Home Buyer</strong>
     </div>
-  `;
-});
-</script>
+
+    <div style="background:#fff;padding:22px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.08);">
+      <div style="color:#f5b50a;">★★★★★</div>
+      <p>“Always responsive, knowledgeable, and goes above and beyond.”</p>
+      <strong>Home Seller</strong>
+    </div>
+
+    <div style="background:#fff;padding:22px;border-radius:12px;box-shadow:0 10px 25px rgba(0,0,0,0.08);">
+      <div style="color:#f5b50a;">★★★★★</div>
+      <p>“We couldn’t have asked for a better agent. Truly exceptional.”</p>
+      <strong>Client</strong>
+    </div>
+
+  </div>
+
+  <div style="margin-top:40px;">
+    <a href="https://search.google.com/local/reviews?placeid=ChIJtQuRYeGr3IgR3b0lniVBwMM"
+       target="_blank"
+       style="
+         display:inline-block;
+         padding:12px 24px;
+         background:#1f4f46;
+         color:#fff;
+         text-decoration:none;
+         border-radius:6px;
+         font-weight:bold;
+       ">
+      Read More Google Reviews
+    </a>
+  </div>
+
+</section>
 
 </body>
 </html>
